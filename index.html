@@ -153,11 +153,11 @@
         </div>
       </section>
 
-      <!-- ================= COLORES ================= -->
+      <!-- ================= COLORES Y PREVISUALIZACIÓN ================= -->
       <section class="card section">
-        <h2>Paso 2: Colores de Filtro</h2>
-        <p class="subtitle">Modifica los colores que se multiplicarán sobre las imágenes para darles el tono de tu
-          fixture.</p>
+        <h2>Paso 2: Colores y Previsualización</h2>
+        <p class="subtitle">Modifica los colores que se multiplicarán sobre las imágenes y observa el resultado en tiempo
+          real.</p>
 
         <div class="color-controls">
           <div class="color-picker-wrapper"><input type="color" id="c1" value="#75AADB"
@@ -168,8 +168,28 @@
               aria-label="Elegir color de filtro primario inferior"></div>
         </div>
 
+        <!-- Previsualización de tarjetas dentro del paso 2 -->
+        <div class="grid" style="margin-top: 2rem; margin-bottom: 2rem; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+          <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 1"
+              src="hoja1.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 2"
+              src="hoja2.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 3"
+              src="hoja3.jpg">
+            <div class="overlay"></div>
+          </div>
+          <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 4"
+              src="hoja4.jpg">
+            <div class="overlay"></div>
+          </div>
+        </div>
+
         <div
-          style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+          style="margin-top: 1rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
           <h3
             style="margin-top:0; color: var(--primary); font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
             <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -188,36 +208,13 @@
       </section>
     </div>
 
-    <!-- ================= HOJAS ================= -->
-    <section class="card section">
-      <h2>Paso 3: Previsualización de tarjetas</h2>
-      <p class="subtitle">Revisa cómo afecta tu paleta de colores sobre cada una de las imágenes.</p>
 
-      <div class="grid">
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 1"
-            src="hoja1.jpg">
-          <div class="overlay"></div>
-        </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 2"
-            src="hoja2.jpg">
-          <div class="overlay"></div>
-        </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 3"
-            src="hoja3.jpg">
-          <div class="overlay"></div>
-        </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 4"
-            src="hoja4.jpg">
-          <div class="overlay"></div>
-        </div>
-      </div>
-    </section>
 
     <!-- ================= A4 ================= -->
     <section class="card section print-card">
       <div class="header-with-action">
         <div class="titles">
-          <h2>Paso 4: Exportación Final A4</h2>
+          <h2>Paso 3: Exportación Final A4</h2>
           <p class="subtitle" style="margin-bottom: 0.5rem;">Este formato está estrictamente configurado para hoja A4.
             Ajustamos la vista para que
             quepa en tu pantalla.</p>
