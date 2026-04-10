@@ -939,11 +939,28 @@
       // Quitamos cualquier factor de escala para que HTML2Canvas mida el plano nativo de 29.7cm
       printArea.style.transform = "none";
 
+      // Forzar carga de imágenes invisibles en móviles debido a lazy loading
+      const images = Array.from(printArea.querySelectorAll('img'));
+      images.forEach(img => {
+        img.removeAttribute('loading');
+      });
+      
+      // Asegurarnos de que el DOM haya procesado los cambios visuales y repintado
+      await new Promise(resolve => requestAnimationFrame(() => setTimeout(resolve, 300)));
+      
+      // Esperar activamente a que las imágenes estén completamente cargadas en memoria antes de capturar
+      await Promise.all(images.map(img => {
+        if (img.complete) return Promise.resolve();
+        return new Promise(r => { img.onload = r; img.onerror = r; });
+      }));
+
       const { jsPDF } = window.jspdf;
 
       const canvasImg = await html2canvas(printArea, {
         scale: 3,
-        useCORS: true
+        useCORS: true,
+        windowWidth: 1200, // Evita redimensionamientos incorrectos en pantallas móviles
+        windowHeight: 900
       });
 
       const imgData = canvasImg.toDataURL('image/png');
