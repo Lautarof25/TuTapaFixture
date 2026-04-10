@@ -78,15 +78,24 @@
     /* Base */
     body {
       font-family: 'Outfit', sans-serif;
-      background: var(--app-bg);
-      background-image:
-        radial-gradient(at 0% 0%, hsla(217, 100%, 76%, 0.15) 0, transparent 50%),
-        radial-gradient(at 100% 0%, hsla(280, 100%, 76%, 0.15) 0, transparent 50%);
-      background-attachment: fixed;
       color: var(--text-main);
       margin: 0;
       padding: 0;
       min-height: 100vh;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      background: var(--app-bg);
+      background-image:
+        radial-gradient(at 0% 0%, hsla(217, 100%, 76%, 0.15) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(280, 100%, 76%, 0.15) 0, transparent 50%);
     }
 
     /* App Header */
@@ -95,9 +104,11 @@
       padding: 3rem 1rem 2rem;
       background: rgba(255, 255, 255, 0.7);
       backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-bottom: 1px solid rgba(0, 0, 0, 0.05);
       margin-bottom: 2rem;
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+      will-change: transform;
     }
 
     .app-header h1 {
@@ -146,11 +157,13 @@
     .card {
       background: var(--card-bg);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 24px;
       padding: 30px;
       box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
       border: 1px solid rgba(255, 255, 255, 0.6);
       transition: transform 0.3s ease, box-shadow 0.3s ease;
+      will-change: transform;
     }
 
     .card:hover {
