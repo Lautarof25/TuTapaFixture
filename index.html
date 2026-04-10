@@ -662,18 +662,6 @@
             src="hoja4.png">
           <div class="overlay"></div>
         </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 5"
-            src="hoja5.png">
-          <div class="overlay"></div>
-        </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 6"
-            src="hoja6.png">
-          <div class="overlay"></div>
-        </div>
-        <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 7"
-            src="hoja7.png">
-          <div class="overlay"></div>
-        </div>
       </div>
     </section>
 
@@ -916,7 +904,7 @@
 
       const printArea = document.getElementById('printArea');
       const originalTransform = printArea.style.transform;
-      
+
       // Si es modo normal, quitamos temporalmente la clase "rotated" de las hojas
       if (modo === 'normal') {
         printArea.querySelectorAll('.rotated').forEach(el => {
@@ -950,7 +938,7 @@
 
       // Restauramos el zoom detectado para el celular
       printArea.style.transform = originalTransform;
-      
+
       // Restauramos las clases rotated si fueron quitadas
       if (modo === 'normal') {
         printArea.querySelectorAll('[data-was-rotated="true"]').forEach(el => {
