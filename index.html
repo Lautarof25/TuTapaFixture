@@ -543,6 +543,102 @@
       color: var(--primary);
     }
 
+    /* ========== SHARE MODAL ========== */
+    .share-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+    .share-modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .share-modal {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+      transform: translateY(20px) scale(0.95);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+      text-align: center;
+    }
+    .share-modal-overlay.active .share-modal {
+      transform: translateY(0) scale(1);
+    }
+    .share-modal-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .share-modal-close:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+    .share-modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .share-modal-desc {
+      color: var(--text-muted);
+      margin-bottom: 1.5rem;
+      line-height: 1.5;
+    }
+    .share-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+    }
+    .share-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-weight: 600;
+      text-decoration: none;
+      color: white;
+      transition: transform 0.2s, opacity 0.2s;
+    }
+    .share-btn:hover {
+      transform: translateY(-2px);
+      opacity: 0.9;
+    }
+    .share-wa {
+      background: #25D366;
+    }
+    .share-tw {
+      background: #000000;
+    }
+    .share-fb {
+      background: #1877F2;
+    }
+
     /* Accessibility improvements */
     *:focus-visible {
       outline: 2px solid var(--primary);
@@ -552,6 +648,31 @@
 </head>
 
 <body>
+
+  <div class="share-modal-overlay" id="shareModal" onclick="if(event.target === this) closeShareModal()">
+    <div class="share-modal">
+      <button class="share-modal-close" onclick="closeShareModal()" aria-label="Cerrar ventana">
+        <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+      </button>
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+      <h3 class="share-modal-title">¡Descarga exitosa!</h3>
+      <p class="share-modal-desc">¿Te sirvió esta herramienta? ¡Ayudanos compartiéndola con tus amigos y colegas!</p>
+      <div class="share-buttons">
+        <a href="#" class="share-btn share-wa" id="shareWa" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51a12.8 12.8 0 0 0-.571-.012c-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.027 6.988 2.895 1.865 1.867 2.891 4.35 2.891 6.992-.001 5.45-4.436 9.886-9.883 9.886m8.508-18.396a11.95 11.95 0 0 0-8.508-3.504C5.952.885.885 5.952.885 12.552a11.89 11.89 0 0 0 1.603 5.992L.696 24l5.632-1.478a11.9 11.9 0 0 0 5.723 1.464h.004c6.599 0 11.667-5.066 11.667-11.666 0-3.2-1.246-6.208-3.508-8.472"/></svg>
+          Compartir en WhatsApp
+        </a>
+        <a href="#" class="share-btn share-tw" id="shareTw" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+          Compartir en X
+        </a>
+        <a href="#" class="share-btn share-fb" id="shareFb" target="_blank" rel="noopener noreferrer">
+          <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.469h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.469h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+          Compartir en Facebook
+        </a>
+      </div>
+    </div>
+  </div>
 
   <header class="app-header">
     <h1>🏆 Custom Fixture</h1>
@@ -993,6 +1114,22 @@
       btn.innerHTML = textOriginal;
       btn.style.opacity = '1';
       btn.style.pointerEvents = 'auto';
+
+      // Disparador del Share Modal
+      let shareTimeout = setTimeout(() => {
+        openShareModal();
+        window.removeEventListener('focus', handleFocusShare);
+      }, 15000); // Popup forzado a los 15 segs
+
+      const handleFocusShare = () => {
+        clearTimeout(shareTimeout);
+        setTimeout(openShareModal, 500); // Breve delay al volver
+        window.removeEventListener('focus', handleFocusShare);
+      };
+
+      setTimeout(() => {
+        window.addEventListener('focus', handleFocusShare);
+      }, 1500);
     }
 
     let tapaDataURL = null;
@@ -1035,6 +1172,23 @@
         // volver a usar variables
         el.style.background = '';
       });
+    }
+
+    /* ===== SHARE MODAL ===== */
+    function openShareModal() {
+      const modal = document.getElementById('shareModal');
+      const url = encodeURIComponent(window.location.href.split('?')[0]);
+      const text = encodeURIComponent("¡Armá tu fixture de fútbol personalizado, gratis y en PDF alta calidad! 🏆⚽");
+      
+      document.getElementById('shareWa').href = `https://api.whatsapp.com/send?text=${text}%20${url}`;
+      document.getElementById('shareTw').href = `https://twitter.com/intent/tweet?text=${text}&url=${url}`;
+      document.getElementById('shareFb').href = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+      
+      modal.classList.add('active');
+    }
+
+    function closeShareModal() {
+      document.getElementById('shareModal').classList.remove('active');
     }
   </script>
 
