@@ -1,0 +1,935 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Generador Fixture Mundial</title>
+
+  <!-- Librerías -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <!-- Fuente Modernista -->
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --app-bg: #f4f6fa;
+      --card-bg: rgba(255, 255, 255, 0.85);
+      --text-main: #1e293b;
+      --text-muted: #64748b;
+      --primary: #3b82f6;
+      --primary-hover: #2563eb;
+      --secondary: #e2e8f0;
+
+      --color1: #75AADB;
+      --color2: #ffffff;
+      --color3: #75AADB;
+    }
+
+    /* Print styles must remain strict */
+    @page {
+      size: A4 landscape;
+      margin: 0;
+    }
+
+    @media print {
+      body {
+        margin: 0;
+        padding: 0;
+      }
+
+      .a4 {
+        margin: 0;
+        padding: 0.5cm;
+        box-shadow: none !important;
+        transform: scale(1) !important;
+        /* Forza evitar escalar en impresión directa */
+      }
+
+      /* Ocultar UI en impresión nativa */
+      .app-header,
+      .controls-grid,
+      .card:not(.print-card),
+      .app-footer {
+        display: none !important;
+      }
+
+      .a4-scaler {
+        padding: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        height: auto !important;
+      }
+
+      .header-with-action {
+        display: none !important;
+      }
+    }
+
+    /* Base */
+    body {
+      font-family: 'Outfit', sans-serif;
+      background: var(--app-bg);
+      background-image:
+        radial-gradient(at 0% 0%, hsla(217, 100%, 76%, 0.15) 0, transparent 50%),
+        radial-gradient(at 100% 0%, hsla(280, 100%, 76%, 0.15) 0, transparent 50%);
+      background-attachment: fixed;
+      color: var(--text-main);
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* App Header */
+    .app-header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.03);
+    }
+
+    .app-header h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 2.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #1e293b, var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.5px;
+    }
+
+    .app-header p {
+      margin: 0;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+    }
+
+    /* Layout Principal */
+    .app-main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px 4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    @media (max-width: 768px) {
+      .controls-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .card {
+        padding: 24px;
+      }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      box-shadow: 0 16px 50px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .card h2 {
+      margin-top: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin-bottom: 0.3rem;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-bottom: 1.5rem;
+      margin-top: 0;
+      line-height: 1.5;
+    }
+
+    /* Botones */
+    button,
+    .btn-primary,
+    .btn-secondary,
+    label.btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      padding: 12px 24px;
+      border-radius: 14px;
+      transition: all 0.2s ease;
+      font-size: 1rem;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+      box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:active {
+      transform: translateY(1px);
+      box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(59, 130, 246, 0.5);
+    }
+
+    .btn-secondary {
+      background: #e0e7ff;
+      color: var(--primary-hover);
+    }
+
+    .btn-secondary:hover {
+      background: #c7d2fe;
+      transform: translateY(-2px);
+    }
+
+    .btn-large {
+      padding: 16px 32px;
+      font-size: 1.1rem;
+    }
+
+    /* Encabezado con acción (Download PDF) */
+    .header-with-action {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+      padding-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .header-with-action .titles {
+      margin: 0;
+    }
+
+    .header-with-action .titles h2 {
+      margin-bottom: 0.3rem;
+    }
+
+    /* ========== GUIA IA EN TAPA ========== */
+    .ai-guide-details {
+      background: rgba(59, 130, 246, 0.04);
+      border: 1px solid rgba(59, 130, 246, 0.15);
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .ai-guide-details[open] {
+      background: white;
+      box-shadow: 0 4px 20px rgba(59, 130, 246, 0.08);
+      border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .ai-guide-details summary {
+      padding: 1rem;
+      font-weight: 600;
+      color: var(--primary);
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .ai-guide-details summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .guide-content {
+      padding: 0 1.25rem 1.25rem;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .prompt-box {
+      background: #f8fafc;
+      border-left: 4px solid var(--primary);
+      padding: 1rem;
+      border-radius: 4px 8px 8px 4px;
+      color: var(--text-main);
+      margin: 1rem 0;
+      user-select: all;
+      /* Facilita copiar el texto completo */
+      font-size: 0.9rem;
+    }
+
+    .prompt-box strong {
+      color: var(--primary-hover);
+    }
+
+    /* ========== TAPA CANVAS (Totalmente Responsivo) ========== */
+    .tapa-preview-card {
+      width: 100%;
+      max-width: 250px;
+      margin: 1.5rem auto;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      border: 4px solid white;
+      aspect-ratio: 717 / 957;
+      background: white;
+      position: relative;
+    }
+
+    /* Sobreescritura a FabricJS para que se ajuste 100% al div fluido de la tapa */
+    .tapa-preview-card .canvas-container {
+      width: 100% !important;
+      height: 100% !important;
+    }
+
+    .tapa-preview-card .canvas-container canvas {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: contain;
+    }
+
+    /* Upload Input Hide */
+    input[type="file"] {
+      display: none;
+    }
+
+    /* Controles de Color */
+    .color-controls {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .color-picker-wrapper {
+      position: relative;
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      overflow: hidden;
+      border: 4px solid white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .color-picker-wrapper:hover {
+      transform: scale(1.15);
+    }
+
+    .color-picker-wrapper input[type="color"] {
+      position: absolute;
+      top: -20px;
+      left: -20px;
+      width: 100px;
+      height: 100px;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    /* Grilla Hojas */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      /* Permitir columnas reducidas en móviles */
+      gap: 20px;
+    }
+
+    .frame {
+      aspect-ratio: 3/4;
+      position: relative;
+      overflow: hidden;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+      border: 2px solid white;
+      background: #fff;
+      transition: transform 0.3s;
+    }
+
+    .frame:hover {
+      transform: translateY(-5px);
+    }
+
+    .frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, var(--color1), var(--color2), var(--color3));
+      opacity: 0.6;
+      mix-blend-mode: multiply;
+      pointer-events: none;
+      transition: background 0.3s ease;
+    }
+
+    /* ========== A4 Impresión y Escala ========== */
+    .a4-scaler {
+      width: 100%;
+      background: #f1f5f9;
+      border-radius: 16px;
+      padding: 1.5rem 0;
+      /* Configurado para escalar sin forzar desplazamiento */
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow: hidden;
+      box-shadow: inset 0 2px 15px rgba(0, 0, 0, 0.05);
+      position: relative;
+      transition: height 0.2s;
+      /* Ayuda visual al redimensionar la ventana */
+    }
+
+    .a4 {
+      box-sizing: border-box;
+      width: 29.7cm;
+      height: 21cm;
+      padding: 0.5cm;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      background-color: white;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+      /* Sombra de documento */
+      transform-origin: top center;
+      /* Central para la animacion de responsive */
+    }
+
+    .page {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .page img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    #tapaPreview img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      /* Adaptable visual igual a las demás páginas */
+      background: #fff;
+    }
+
+    .rotated {
+      transform: rotate(180deg);
+    }
+
+    /* Utils */
+    @keyframes spin {
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .spin {
+      animation: spin 1s linear infinite;
+    }
+
+    /* ========== FOOTER ========== */
+    .app-footer {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(0, 0, 0, 0.05);
+      margin-top: 2rem;
+    }
+
+    .footer-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .footer-content p {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .footer-content p strong {
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 1.5rem;
+    }
+
+    .footer-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+      color: var(--primary);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="app-header">
+    <h1>🏆 Custom Fixture</h1>
+    <p>Personaliza tu diseño, genera el fixture y exporta tu PDF en alta calidad.</p>
+  </header>
+
+  <main class="app-main">
+
+    <div class="controls-grid">
+      <!-- ================= TAPA ================= -->
+      <section class="card section">
+        <h2>Paso 1: Crear Tapa</h2>
+        <p class="subtitle">Subí tu imagen en formato 3:4 para armar la página principal.</p>
+
+        <details class="ai-guide-details">
+          <summary>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12z">
+              </path>
+            </svg>
+            ¿No tenés imagen? Créala con Inteligencia Artificial
+          </summary>
+          <div class="guide-content">
+            <p style="margin-top: 0">Copia la siguiente plantilla y reemplaza lo marcado con tus datos. Luego, envíalo a
+              un generador como <strong>Copilot Designer</strong> o <strong>ChatGPT</strong>.</p>
+            <div class="prompt-box">
+              "Necesito el diseño completo para una portada publicitaria sobre <strong>[TU NEGOCIO, ej:
+                Peluquería]</strong> en formato estricto vertical 3:4. Usa una elegante paleta de colores basada en
+              <strong>[TUS COLORES PREFERIDOS]</strong>. El diseño debe verse profesional e incluir escrito lo
+              siguiente.<br><br>
+              Título superior: <strong>'[TU TÍTULO PRINCIPAL]'</strong>.<br>
+              Título central con letras grandes y llamativas: <strong>'Fixture Mundial 2026'</strong>.<br>
+              Abajo incluye en pequeño números o íconos de contacto: WhatsApp <strong>[TU NÚMERO]</strong> e Instagram
+              <strong>[TU USUARIO]</strong>.<br>
+              El fondo debe disimular imágenes relacionadas a <strong>[TU TEMÁTICA, ej: tijeras, salón,
+                peinados]</strong>."
+            </div>
+            <p style="margin-bottom:0; font-weight:600; color: var(--primary);">Descarga tu imagen favorita de la IA, y
+              luego hacé click en "Subir TU Imagen" más abajo.</p>
+          </div>
+        </details>
+
+        <div class="file-upload-wrapper" style="text-align: center;">
+          <label class="btn-primary" for="upload">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            Subir Tu Imagen
+          </label>
+          <input type="file" id="upload" accept="image/*">
+        </div>
+
+        <div class="tapa-preview-card">
+          <canvas id="canvas" width="717" height="957"></canvas>
+        </div>
+      </section>
+
+      <!-- ================= COLORES ================= -->
+      <section class="card section">
+        <h2>Paso 2: Colores de Filtro</h2>
+        <p class="subtitle">Modifica los colores que se multiplicarán sobre las imágenes para darles el tono de tu
+          fixture.</p>
+
+        <div class="color-controls">
+          <div class="color-picker-wrapper"><input type="color" id="c1" value="#75AADB"></div>
+          <div class="color-picker-wrapper"><input type="color" id="c2" value="#ffffff"></div>
+          <div class="color-picker-wrapper"><input type="color" id="c3" value="#75AADB"></div>
+        </div>
+
+        <div
+          style="margin-top: 2rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
+          <h3
+            style="margin-top:0; color: var(--primary); font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path
+                d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41M12 6a6 6 0 1 0 0 12 6 6 0 0 0 0-12z">
+              </path>
+            </svg>
+            Tip de Diseño
+          </h3>
+          <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-muted);">
+            Te recomendamos colocar colores llamativos en el primer y tercer selector de las esquinas, y elegir blanco
+            en el centro para dar el mejor contraste de resplandor.
+          </p>
+        </div>
+      </section>
+    </div>
+
+    <!-- ================= HOJAS ================= -->
+    <section class="card section">
+      <h2>Paso 3: Previsualización de tarjetas</h2>
+      <p class="subtitle">Revisa cómo afecta tu paleta de colores sobre cada una de las imágenes.</p>
+
+      <div class="grid">
+        <div class="frame"><img src="hoja1.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja2.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja3.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja4.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja5.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja6.png">
+          <div class="overlay"></div>
+        </div>
+        <div class="frame"><img src="hoja7.png">
+          <div class="overlay"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= A4 ================= -->
+    <section class="card section print-card">
+      <div class="header-with-action">
+        <div class="titles">
+          <h2>Paso 4: Exportación Final A4</h2>
+          <p class="subtitle">Este formato está estrictamente configurado para hoja A4. Ajustamos la vista para que
+            quepa en tu pantalla.</p>
+        </div>
+        <button class="btn-primary btn-large" onclick="descargarPDF()" id="btnDescargar">
+          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Descargar PDF A4
+        </button>
+
+        <details class="ai-guide-details" style="margin-bottom: 2rem;">
+          <summary>
+            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" viewBox="0 0 24 24">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
+            </svg>
+            Mini Tutorial: ¿Cómo doblar y armar tu Fixture?
+          </summary>
+          <div class="guide-content"
+            style="display: flex; flex-direction: column; gap: 1rem; align-items: center; text-align: center;">
+            <p style="margin: 0; font-size: 1rem; color: var(--text-main);">
+              Una vez que imprimas y recortes tu PDF, armar el fixture es súper sencillo. Sigue este diagrama para
+              realizar los pliegues correctamente de forma acorde a las marcas. ¡Así conseguirás tu formato perfecto de
+              bolsillo ideal para repartir!
+            </p>
+            <img src="doblarFixture.jpg" alt="Instrucciones para doblar el fixture"
+              style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid white;">
+          </div>
+        </details>
+      </div>
+
+      <div class="a4-scaler" id="a4Scaler">
+        <div class="a4" id="printArea">
+          <!-- fila 1 -->
+          <div class="page rotated"><img src="hoja7.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page rotated"><img src="hoja6.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page rotated"><img src="hoja5.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page rotated"><img src="hoja4.png">
+            <div class="overlay"></div>
+          </div>
+          <!-- fila 2 -->
+          <div class="page"><img src="hoja3.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page"><img src="hoja2.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page"><img src="hoja1.png">
+            <div class="overlay"></div>
+          </div>
+          <div class="page" id="tapaPreview"></div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-content">
+      <p>Desarrollado con ❤️ por <strong>Lautadev</strong></p>
+      <div class="footer-links">
+        <a href="https://lautadev.netlify.app/" target="_blank">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="2" y1="12" x2="22" y2="12"></line>
+            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path>
+          </svg>
+          Portafolio Web
+        </a>
+        <a href="https://github.com/Lautarof25" target="_blank">
+          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+            stroke-linejoin="round" viewBox="0 0 24 24">
+            <path
+              d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22">
+            </path>
+          </svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* ===== CANVAS ===== */
+    const canvas = new fabric.Canvas('canvas', {
+      selection: false,
+      interactive: false
+    });
+    canvas.setBackgroundColor('white', canvas.renderAll.bind(canvas));
+
+    /* Cargar imagen por defecto ("tapa.png") */
+    fabric.Image.fromURL('tapa.png', function (img) {
+      if (img) {
+        const scale = Math.max(
+          canvas.width / img.width,
+          canvas.height / img.height
+        );
+        img.set({
+          scaleX: scale,
+          scaleY: scale,
+          originX: 'center',
+          originY: 'center',
+          left: canvas.width / 2,
+          top: canvas.height / 2,
+          selectable: false,
+          evented: false
+        });
+        canvas.add(img);
+        canvas.sendToBack(img);
+        setTimeout(actualizarTapaPreview, 100);
+      }
+    });
+
+    document.getElementById('upload').addEventListener('change', function (e) {
+      if (!e.target.files.length) return;
+      const reader = new FileReader();
+      reader.onload = function (event) {
+        fabric.Image.fromURL(event.target.result, function (img) {
+          const scale = Math.max(
+            canvas.width / img.width,
+            canvas.height / img.height
+          );
+
+          img.set({
+            scaleX: scale,
+            scaleY: scale,
+            originX: 'center',
+            originY: 'center',
+            left: canvas.width / 2,
+            top: canvas.height / 2,
+            selectable: false,
+            evented: false
+          });
+
+          canvas.clear();
+          canvas.setBackgroundColor('white', canvas.renderAll.bind(canvas));
+          canvas.add(img);
+          canvas.sendToBack(img);
+
+          // Reflejar la carga en la previsualización A4 automáticamente
+          setTimeout(actualizarTapaPreview, 100);
+        });
+      };
+      reader.readAsDataURL(e.target.files[0]);
+    });
+
+    /* ===== COLORES ===== */
+    const root = document.documentElement;
+
+    c1.oninput = e => root.style.setProperty('--color1', e.target.value);
+    c2.oninput = e => root.style.setProperty('--color2', e.target.value);
+    c3.oninput = e => root.style.setProperty('--color3', e.target.value);
+
+    /* ===== A4 ESCALA RESPONSIVA ===== */
+    function adjustA4Scale() {
+      const scaler = document.getElementById('a4Scaler');
+      const a4 = document.getElementById('printArea');
+      if (!scaler || !a4) return;
+
+      // Temporarily remove transform to measure actual pixel size
+      a4.style.transform = "none";
+      const a4Width = a4.offsetWidth;
+
+      // We want to leave a small safe margin inside the scaler (e.g., 20px total)
+      const containerWidth = scaler.clientWidth - 20;
+
+      if (containerWidth > 0 && containerWidth < a4Width) {
+        const scale = containerWidth / a4Width;
+        a4.style.transformOrigin = "top center";
+        a4.style.transform = `scale(${scale})`;
+
+        // Adjust the container's height so it shrinks and doesn't leave huge empty space below
+        scaler.style.height = (a4.offsetHeight * scale + 48) + "px"; // 48 is for top/bottom padding
+      } else {
+        a4.style.transform = "scale(1)";
+        scaler.style.height = "auto";
+      }
+    }
+
+    window.addEventListener('resize', adjustA4Scale);
+    window.addEventListener('load', adjustA4Scale);
+    setTimeout(adjustA4Scale, 100);
+
+    /* ===== PDF ===== */
+    async function descargarPDF() {
+      const btn = document.getElementById('btnDescargar');
+      const textOriginal = btn.innerHTML;
+      btn.innerHTML = `<svg class="spin" style="margin-right: 8px" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"></path></svg> Generando PDF...`;
+      btn.style.opacity = '0.8';
+      btn.style.pointerEvents = 'none';
+
+      actualizarTapaPreview();
+      prepararParaExport();
+
+      const printArea = document.getElementById('printArea');
+      const originalTransform = printArea.style.transform;
+      // Quitamos cualquier factor de escala para que HTML2Canvas mida el plano nativo de 29.7cm
+      printArea.style.transform = "none";
+
+      const { jsPDF } = window.jspdf;
+
+      const canvasImg = await html2canvas(printArea, {
+        scale: 3,
+        useCORS: true
+      });
+
+      const imgData = canvasImg.toDataURL('image/png');
+
+      const pdf = new jsPDF({
+        orientation: 'landscape',
+        unit: 'mm',
+        format: 'a4'
+      });
+
+      pdf.addImage(imgData, 'PNG', 0, 0, 297, 210);
+      pdf.save("fixture.pdf");
+
+      restaurarEstilo();
+
+      // Restauramos el zoom detectado para el celular
+      printArea.style.transform = originalTransform;
+
+      btn.innerHTML = textOriginal;
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+
+    let tapaDataURL = null;
+
+    function actualizarTapaPreview() {
+      tapaDataURL = canvas.toDataURL("image/png");
+
+      const container = document.getElementById('tapaPreview');
+      container.innerHTML = "";
+
+      const img = document.createElement('img');
+      img.src = tapaDataURL;
+      container.appendChild(img);
+    }
+
+    function prepararParaExport() {
+      const color1 = getComputedStyle(document.documentElement).getPropertyValue('--color1').trim();
+      const color2 = getComputedStyle(document.documentElement).getPropertyValue('--color2').trim();
+      const color3 = getComputedStyle(document.documentElement).getPropertyValue('--color3').trim();
+
+      document.querySelectorAll('.overlay').forEach(el => {
+        el.style.mixBlendMode = 'normal';
+        el.style.opacity = '0.5';
+
+        el.style.background = `
+  linear-gradient(135deg,
+    ${color1}cc,
+    ${color2}88,
+    ${color3}cc
+  )
+`;
+      });
+    }
+
+    function restaurarEstilo() {
+      document.querySelectorAll('.overlay').forEach(el => {
+        el.style.mixBlendMode = 'multiply';
+        el.style.opacity = '0.6';
+
+        // volver a usar variables
+        el.style.background = '';
+      });
+    }
+  </script>
+
+</body>
+
+</html>
