@@ -263,3 +263,58 @@ function openShareModal() {
 function closeShareModal() {
   document.getElementById('shareModal').classList.remove('active');
 }
+
+/* ===== AI PROMPT GENERATOR ===== */
+const aiInputs = {
+  pBusiness: 'outBusiness',
+  pColors: 'outColors',
+  pTitle: 'outTitle',
+  pTheme: 'outTheme',
+  pWhatsapp: 'outWhatsapp',
+  pInstagram: 'outInstagram'
+};
+
+const defaultValues = {
+  pBusiness: '[TU NEGOCIO]',
+  pColors: '[TUS COLORES PREFERIDOS]',
+  pTitle: '[TU TÍTULO PRINCIPAL]',
+  pTheme: '[TU TEMÁTICA]',
+  pWhatsapp: '[TU NÚMERO]',
+  pInstagram: '[TU USUARIO]'
+};
+
+function updatePrompt() {
+  let promptText = document.getElementById('promptBox').innerText;
+  
+  // Update UI spans
+  for (const [inputId, outputId] of Object.entries(aiInputs)) {
+    const val = document.getElementById(inputId).value.trim();
+    document.getElementById(outputId).innerText = val || defaultValues[inputId];
+  }
+
+  // Generate URL for ChatGPT
+  const fullPrompt = document.getElementById('promptBox').innerText;
+  const encodedPrompt = encodeURIComponent(fullPrompt);
+  const chatUrl = `https://chatgpt.com/?prompt=${encodedPrompt}`;
+  
+  document.getElementById('btnGoToChatgpt').href = chatUrl;
+  document.getElementById('topChatLink').href = chatUrl;
+}
+
+// Add listeners to all inputs
+Object.keys(aiInputs).forEach(id => {
+  document.getElementById(id).addEventListener('input', updatePrompt);
+});
+
+// Copy button
+document.getElementById('btnCopyPrompt').addEventListener('click', function() {
+  const text = document.getElementById('promptBox').innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const originalText = this.innerHTML;
+    this.innerHTML = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6L9 17l-5-5"></path></svg> ¡Copiado!`;
+    setTimeout(() => {
+      this.innerHTML = originalText;
+    }, 2000);
+  });
+});
+

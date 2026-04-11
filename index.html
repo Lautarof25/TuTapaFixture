@@ -113,22 +113,71 @@
             ¿No tenés imagen? Créala con Inteligencia Artificial
           </summary>
           <div class="guide-content">
-            <p style="margin-top: 0">Copia la siguiente plantilla y reemplaza lo marcado con tus datos. Luego, envíalo a
-              un generador gratuito como <a href="https://chatgpt.com/" target="_blank"
-                rel="noopener noreferrer"><strong>ChatGPT</strong></a>.</p>
-            <div class="prompt-box">
-              "Necesito el diseño completo para una portada publicitaria sobre <strong>[TU NEGOCIO, ej:
-                Peluquería]</strong> en formato estricto vertical 3:4. Usa una elegante paleta de colores basada en
-              <strong>[TUS COLORES PREFERIDOS]</strong>. El diseño debe verse profesional e incluir escrito lo
-              siguiente.<br><br>
-              Título superior: <strong>'[TU TÍTULO PRINCIPAL]'</strong>.<br>
-              Título central con letras grandes y llamativas: <strong>'Fixture Mundial 2026'</strong>.<br>
-              Abajo incluye en pequeño números o íconos de contacto: WhatsApp <strong>[TU NÚMERO]</strong> e Instagram
-              <strong>[TU USUARIO]</strong>.<br>
-              El fondo debe disimular imágenes relacionadas a <strong>[TU TEMÁTICA, ej: tijeras, salón,
-                peinados]</strong>."
+            <p style="margin-top: 0">Completa tus datos para personalizar la plantilla. Luego, cópiala o andá a
+              <a href="https://chat.openai.com/" target="_blank" rel="noopener noreferrer"
+                id="topChatLink"><strong>ChatGPT</strong></a>.
+            </p>
+
+            <div class="ai-form-grid">
+              <div class="field-group">
+                <label for="pBusiness">Tu Negocio</label>
+                <input type="text" id="pBusiness" placeholder="Ej: Peluquería">
+              </div>
+              <div class="field-group">
+                <label for="pColors">Tus Colores</label>
+                <input type="text" id="pColors" placeholder="Ej: Celeste y Blanco">
+              </div>
+              <div class="field-group">
+                <label for="pTitle">Título Superior</label>
+                <input type="text" id="pTitle" placeholder="Ej: Mi Comercio">
+              </div>
+              <div class="field-group">
+                <label for="pTheme">Fotos/Iconos de</label>
+                <input type="text" id="pTheme" placeholder="Ej: tijeras, salón">
+              </div>
+              <div class="field-group">
+                <label for="pWhatsapp">WhatsApp</label>
+                <input type="text" id="pWhatsapp" placeholder="+54 11...">
+              </div>
+              <div class="field-group">
+                <label for="pInstagram">Instagram</label>
+                <input type="text" id="pInstagram" placeholder="@usuario">
+              </div>
             </div>
-            <div>Opcional: Podés adjuntar tu logo al prompt de chatgpt.</div>
+
+            <div class="prompt-box" id="promptBox">
+              "Necesito el diseño completo para una portada publicitaria sobre <strong id="outBusiness">[TU
+                NEGOCIO]</strong> en formato estricto vertical 3:4. Usa una elegante paleta de colores basada en <strong
+                id="outColors">[TUS COLORES PREFERIDOS]</strong>. El diseño debe verse profesional e incluir escrito lo
+              siguiente.<br><br>
+              Título superior: <strong id="outTitle">'[TU TÍTULO PRINCIPAL]'</strong>.<br>
+              Título central con letras grandes y llamativas: <strong>'Fixture Mundial 2026'</strong>.<br>
+              Abajo incluye en pequeño números o íconos de contacto: WhatsApp <strong id="outWhatsapp">[TU
+                NÚMERO]</strong> e Instagram <strong id="outInstagram">[TU USUARIO]</strong>.<br>
+              El fondo debe disimular imágenes relacionadas a <strong id="outTheme">[TU TEMÁTICA]</strong>."
+            </div>
+
+            <div class="ai-guide-actions">
+              <button class="btn-primary" id="btnCopyPrompt">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path
+                    d="M8 4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-2M16 4h2a2 2 0 0 1 2 2v4M8 4v4h4M8 4h8M16 4v4">
+                  </path>
+                </svg>
+                Copiar Plantilla
+              </button>
+              <a href="https://chat.openai.com/" target="_blank" id="btnGoToChatgpt" class="btn-secondary">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                  <polyline points="15 3 21 3 21 9"></polyline>
+                  <line x1="10" y1="14" x2="21" y2="3"></line>
+                </svg>
+                Ir a ChatGPT
+              </a>
+            </div>
+
+            <div style="margin-top: 1rem; font-size: 0.85rem;">Opcional: Podés adjuntar tu logo al prompt de ChatGPT.
+            </div>
             <p style="margin-bottom:0; font-weight:600; color: var(--primary);">Descarga tu imagen favorita de la IA, y
               luego hacé click en "Subir Tu Imagen" más abajo.</p>
           </div>
@@ -156,7 +205,8 @@
       <!-- ================= COLORES Y PREVISUALIZACIÓN ================= -->
       <section class="card section">
         <h2>Paso 2: Colores y Previsualización</h2>
-        <p class="subtitle">Modifica los colores que se multiplicarán sobre las imágenes y observa el resultado en tiempo
+        <p class="subtitle">Modifica los colores que se multiplicarán sobre las imágenes y observa el resultado en
+          tiempo
           real.</p>
 
         <div class="color-controls">
@@ -169,7 +219,8 @@
         </div>
 
         <!-- Previsualización de tarjetas dentro del paso 2 -->
-        <div class="grid" style="margin-top: 2rem; margin-bottom: 2rem; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <div class="grid"
+          style="margin-top: 2rem; margin-bottom: 2rem; grid-template-columns: repeat(2, 1fr); gap: 12px;">
           <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 1"
               src="hoja1.jpg">
             <div class="overlay"></div>
