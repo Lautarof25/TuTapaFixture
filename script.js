@@ -8,7 +8,7 @@ const canvas = new fabric.Canvas('canvas', {
 canvas.setBackgroundColor('white', canvas.renderAll.bind(canvas));
 
 /* Cargar imagen por defecto ("tapa.jpg") */
-fabric.Image.fromURL('tapa.jpg', function (img) {
+fabric.Image.fromURL('img/tapa.jpg', function (img) {
   if (img) {
     const scale = Math.max(
       canvas.width / img.width,
@@ -285,7 +285,7 @@ const defaultValues = {
 
 function updatePrompt() {
   let promptText = document.getElementById('promptBox').innerText;
-  
+
   // Update UI spans
   for (const [inputId, outputId] of Object.entries(aiInputs)) {
     const val = document.getElementById(inputId).value.trim();
@@ -296,7 +296,7 @@ function updatePrompt() {
   const fullPrompt = document.getElementById('promptBox').innerText;
   const encodedPrompt = encodeURIComponent(fullPrompt);
   const chatUrl = `https://chatgpt.com/?prompt=${encodedPrompt}`;
-  
+
   document.getElementById('btnGoToChatgpt').href = chatUrl;
   document.getElementById('topChatLink').href = chatUrl;
 }
@@ -307,7 +307,7 @@ Object.keys(aiInputs).forEach(id => {
 });
 
 // Copy button
-document.getElementById('btnCopyPrompt').addEventListener('click', function() {
+document.getElementById('btnCopyPrompt').addEventListener('click', function () {
   const text = document.getElementById('promptBox').innerText;
   navigator.clipboard.writeText(text).then(() => {
     const originalText = this.innerHTML;
