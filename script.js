@@ -318,3 +318,81 @@ document.getElementById('btnCopyPrompt').addEventListener('click', function () {
   });
 });
 
+// AI direct generation
+async function generarImagenIA() {
+  const btn = document.getElementById('btnDirectGenerate');
+  const originalHtml = btn.innerHTML;
+
+  // 1. Obtener datos actuales
+  const business = document.getElementById('pBusiness').value.trim();
+  const colors = document.getElementById('pColors').value.trim();
+  const theme = document.getElementById('pTheme').value.trim() || "fútbol";
+
+  if (!business || !colors) {
+    alert("Para mejores resultados, ingresá al menos 'Tu Negocio' y 'Tus Colores'.");
+    return;
+  }
+
+  // 2. Estado de carga
+  btn.innerHTML = `<svg class="spin" style="margin-right: 8px" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12a9 9 0 11-6.219-8.56"></path></svg> Creando...`;
+  btn.style.opacity = '0.7';
+  btn.style.pointerEvents = 'none';
+
+  // 3. Construir Prompt Optimizado (limpiando caracteres que puedan fallar)
+  const cleanBusiness = business.replace(/['"]/g, '');
+  const cleanTheme = theme.replace(/['"]/g, '');
+  
+  const promptText = `Professional vertical soccer tournament fixture cover, title Fixture Mundial 2026, business brand ${cleanBusiness}, clean graphic design, colors ${colors}, quality ${cleanTheme} background, marketing poster.`;
+  const seed = Math.floor(Math.random() * 1000000);
+  
+  // Endpoint correcto que soporta CORS y es para imágenes directas
+  const imageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(promptText)}?width=750&height=1000&seed=${seed}`;
+  
+  console.log("Generando imagen con IA:", imageUrl);
+
+  // 4. Cargar en Canvas
+  fabric.Image.fromURL(imageUrl, function (img) {
+    if (img) {
+      const scale = Math.max(
+        canvas.width / img.width,
+        canvas.height / img.height
+      );
+
+      img.set({
+        scaleX: scale,
+        scaleY: scale,
+        originX: 'center',
+        originY: 'center',
+        left: canvas.width / 2,
+        top: canvas.height / 2,
+        selectable: false,
+        evented: false
+      });
+
+      canvas.clear();
+      canvas.setBackgroundColor('white', canvas.renderAll.bind(canvas));
+      canvas.add(img);
+      canvas.sendToBack(img);
+      canvas.renderAll();
+
+      setTimeout(actualizarTapaPreview, 100);
+
+      // Restaurar UI
+      btn.innerHTML = `✅ ¡Tapa Creada!`;
+      setTimeout(() => {
+        btn.innerHTML = originalHtml;
+        btn.style.opacity = '1';
+        btn.style.pointerEvents = 'auto';
+      }, 2000);
+
+    } else {
+      alert("No se pudo conectar con el motor de IA. Probá de nuevo en unos segundos.");
+      btn.innerHTML = originalHtml;
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+    }
+  }, { crossOrigin: 'anonymous' });
+}
+
+// Add event listener for the new button
+document.getElementById('btnDirectGenerate').addEventListener('click', generarImagenIA);
