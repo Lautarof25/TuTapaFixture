@@ -7,8 +7,8 @@ const canvas = new fabric.Canvas('canvas', {
 });
 canvas.setBackgroundColor('white', canvas.renderAll.bind(canvas));
 
-/* Cargar imagen por defecto ("tapa.jpg") */
-fabric.Image.fromURL('img/tapa.jpg', function (img) {
+/* Cargar imagen por defecto ("tapa.webp") */
+fabric.Image.fromURL('img/tapa.webp', function (img) {
   if (img) {
     const scale = Math.max(
       canvas.width / img.width,

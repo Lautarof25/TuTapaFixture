@@ -13,10 +13,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <!-- Librerías de terceros -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <!-- Librerías de terceros (cargadas dinámicamente sin bloquear el renderizado) -->
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.0/fabric.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script defer src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <!-- Fuente Modernista -->
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
   <meta property="og:title" content="¡Diseñá y Descargá tu Fixture Mundial 2026 Gratis! 🏆">
   <meta property="og:description"
     content="¡Crea tu fixture personalizado hoy! Sube tu imagen, elige tus colores y descarga el PDF listo para imprimir en A4. ¡Entra aquí ya!">
-  <meta property="og:image" content="https://lautarof25.github.io/TuTapaFixture/og_image.jpg">
+  <meta property="og:image" content="https://lautarof25.github.io/TuTapaFixture/og_image.webp">
   <meta property="og:image:alt" content="¡Haz clic para diseñar tu propio fixture mundial personalizado ahora!">
   <meta property="og:site_name" content="Tu Tapa Fixture">
   <meta property="og:locale" content="es_AR">
@@ -44,7 +44,7 @@
   <meta name="twitter:title" content="¡Diseñá y Descargá tu Fixture Mundial 2026 Gratis! 🏆">
   <meta name="twitter:description"
     content="¡Crea tu fixture personalizado hoy! Sube tu imagen, elige tus colores y descarga el PDF listo para imprimir en A4. ¡Entra aquí ya!">
-  <meta name="twitter:image" content="https://lautarof25.github.io/TuTapaFixture/og_image.jpg">
+  <meta name="twitter:image" content="https://lautarof25.github.io/TuTapaFixture/og_image.webp">
   <meta name="twitter:image:alt" content="¡Haz clic para diseñar tu propio fixture mundial personalizado ahora!">
 
 </head>
@@ -60,7 +60,7 @@
           <line x1="6" y1="6" x2="18" y2="18"></line>
         </svg>
       </button>
-      <div style="font-size: 3rem; margin-bottom: 1rem;">🎉</div>
+      <div class="share-modal-emoji">🎉</div>
       <h3 class="share-modal-title">¡Descarga exitosa!</h3>
       <p class="share-modal-desc">¿Te sirvió esta herramienta? ¡Ayudanos compartiéndola con tus amigos y colegas!</p>
       <div class="share-buttons">
@@ -113,7 +113,7 @@
             ¿No tenés imagen? Créala con Inteligencia Artificial
           </summary>
           <div class="guide-content">
-            <p style="margin-top: 0">Completa tus datos para personalizar la plantilla. Luego, cópiala o andá a
+            <p class="guide-text-top">Completa tus datos para personalizar la plantilla. Luego, cópiala o andá a
               <a href="https://chat.openai.com/" target="_blank" rel="noopener noreferrer"
                 id="topChatLink"><strong>ChatGPT</strong></a>.
             </p>
@@ -176,14 +176,14 @@
               </a>
             </div>
 
-            <div style="margin-top: 1rem; font-size: 0.85rem;">Opcional: Podés adjuntar tu logo al prompt de ChatGPT.
+            <div class="guide-text-optional">Opcional: Podés adjuntar tu logo al prompt de ChatGPT.
             </div>
-            <p style="margin-bottom:0; font-weight:600; color: var(--primary);">Descarga tu imagen favorita de la IA, y
+            <p class="guide-text-action">Descarga tu imagen favorita de la IA, y
               luego hacé click en "Subir Tu Imagen" más abajo.</p>
           </div>
         </details>
 
-        <div class="file-upload-wrapper" style="text-align: center;">
+        <div class="file-upload-wrapper text-center">
           <label class="btn-primary" for="upload">
             <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -219,30 +219,27 @@
         </div>
 
         <!-- Previsualización de tarjetas dentro del paso 2 -->
-        <div class="grid"
-          style="margin-top: 2rem; margin-bottom: 2rem; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+        <div class="grid grid-steps">
           <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 1"
-              src="img/hoja1.jpg">
+              src="img/hoja1.webp">
             <div class="overlay"></div>
           </div>
           <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 2"
-              src="img/hoja2.jpg">
+              src="img/hoja2.webp">
             <div class="overlay"></div>
           </div>
           <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 3"
-              src="img/hoja3.jpg">
+              src="img/hoja3.webp">
             <div class="overlay"></div>
           </div>
           <div class="frame"><img loading="lazy" decoding="async" alt="Previsualización de la tarjeta de la fase 4"
-              src="img/hoja4.jpg">
+              src="img/hoja4.webp">
             <div class="overlay"></div>
           </div>
         </div>
 
-        <div
-          style="margin-top: 1rem; padding: 1.5rem; background: rgba(59, 130, 246, 0.05); border-radius: 12px; border: 1px solid rgba(59, 130, 246, 0.1);">
-          <h3
-            style="margin-top:0; color: var(--primary); font-size: 1.1rem; display: flex; align-items: center; gap: 6px;">
+        <div class="design-tip-box">
+          <h3 class="design-tip-title">
             <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
               <path
@@ -251,7 +248,7 @@
             </svg>
             Tip de Diseño
           </h3>
-          <p style="margin: 0; font-size: 0.95rem; line-height: 1.5; color: var(--text-muted);">
+          <p class="design-tip-desc">
             Te recomendamos colocar colores llamativos en el primer y tercer selector de las esquinas, y elegir blanco
             en el centro para dar el mejor contraste de resplandor.
           </p>
@@ -266,20 +263,19 @@
       <div class="header-with-action">
         <div class="titles">
           <h2>Paso 3: Exportación Final A4</h2>
-          <p class="subtitle" style="margin-bottom: 0.5rem;">Este formato está estrictamente configurado para hoja A4.
+          <p class="subtitle subtitle-compact">Este formato está estrictamente configurado para hoja A4.
             Ajustamos la vista para que
             quepa en tu pantalla.</p>
-          <div class="mobile-warning"
-            style="display: none; align-items: center; gap: 10px; color: #b45309; font-size: 0.95rem; background: #fffbeb; padding: 12px 16px; border-radius: 8px; border: 1px solid #fde68a; margin-bottom: 1.5rem; line-height: 1.4;">
+          <div class="mobile-warning-box">
             <svg aria-hidden="true" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2"
-              stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" style="flex-shrink: 0;">
+              stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24" class="mobile-warning-icon">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
             </svg>
             <span><strong>Tip de rendimiento:</strong> La vista previa A4 se oculta en celulares para ahorrar batería y
               memoria, pero la exportación PDF seguirá funcionando perfectamente.</span>
           </div>
         </div>
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <div class="actions-row">
           <button class="btn-primary btn-large" onclick="descargarPDF('plegable')" id="btnDescargarPlegable"
             aria-label="Descargar PDF A4 generado modo plegable">
             <svg aria-hidden="true" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"
@@ -302,7 +298,7 @@
           </button>
         </div>
 
-        <details class="ai-guide-details" style="margin-bottom: 2rem;">
+        <details class="ai-guide-details ai-guide-details-spaced">
           <summary>
             <svg aria-hidden="true" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
               stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -314,16 +310,15 @@
             </svg>
             Mini Tutorial: ¿Cómo doblar y armar tu Fixture?
           </summary>
-          <div class="guide-content"
-            style="display: flex; flex-direction: column; gap: 1rem; align-items: center; text-align: center;">
-            <p style="margin: 0; font-size: 1rem; color: var(--text-main);">
+          <div class="guide-content guide-content-centered">
+            <p class="tutorial-text">
               Una vez que imprimas tu PDF, armar el fixture es súper sencillo. Seguí este diagrama para
               realizar los pliegues correctamente de forma acorde a las marcas. ¡Así conseguirás tu formato perfecto de
               bolsillo ideal para repartir!
             </p>
-            <img loading="lazy" decoding="async" src="img/doblarFixture.jpg"
+            <img loading="lazy" decoding="async" src="img/doblarFixture.webp"
               alt="Instrucciones visuales sobre cómo armar y doblar el fixture impreso"
-              style="max-width: 100%; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: 2px solid white;">
+              class="tutorial-img">
           </div>
         </details>
       </div>
@@ -332,32 +327,32 @@
         <div class="a4" id="printArea">
           <!-- fila 1 -->
           <div class="page rotated"><img loading="lazy" decoding="async" alt="Fase 7 invertida en hoja de impresión"
-              src="img/hoja7.jpg">
+              src="img/hoja7.webp">
             <div class="overlay"></div>
           </div>
           <div class="page rotated"><img loading="lazy" decoding="async" alt="Fase 6 invertida en hoja de impresión"
-              src="img/hoja6.jpg">
+              src="img/hoja6.webp">
             <div class="overlay"></div>
           </div>
           <div class="page rotated"><img loading="lazy" decoding="async" alt="Fase 5 invertida en hoja de impresión"
-              src="img/hoja5.jpg">
+              src="img/hoja5.webp">
             <div class="overlay"></div>
           </div>
           <div class="page rotated"><img loading="lazy" decoding="async" alt="Fase 4 invertida en hoja de impresión"
-              src="img/hoja4.jpg">
+              src="img/hoja4.webp">
             <div class="overlay"></div>
           </div>
           <!-- fila 2 -->
           <div class="page"><img loading="lazy" decoding="async" alt="Fase 3 derecha en hoja de impresión"
-              src="img/hoja3.jpg">
+              src="img/hoja3.webp">
             <div class="overlay"></div>
           </div>
           <div class="page"><img loading="lazy" decoding="async" alt="Fase 2 derecha en hoja de impresión"
-              src="img/hoja2.jpg">
+              src="img/hoja2.webp">
             <div class="overlay"></div>
           </div>
           <div class="page"><img loading="lazy" decoding="async" alt="Fase 1 derecha en hoja de impresión"
-              src="img/hoja1.jpg">
+              src="img/hoja1.webp">
             <div class="overlay"></div>
           </div>
           <div class="page" id="tapaPreview"></div>
@@ -395,7 +390,7 @@
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <script src="script.js" defer></script>
 </body>
 
 </html>
